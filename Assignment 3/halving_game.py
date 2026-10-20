@@ -21,7 +21,7 @@ class Game:
 
     def result(self, state: State, action: Action) -> State:
         _, number = state
-        if action == ' -- ':
+        if action == '-- ':
             return (self.to_move(state) + 1) % 2, number - 1
         else:
             return (self.to_move(state) + 1) % 2, number // 2  # Floored division
@@ -36,18 +36,41 @@ class Game:
 
     def print(self, state: State):
         _, number = state
-        print(f' The number is {number} and ', end=' ')
+        print(f' The number is {number} and', end=' ')
         if self.is_terminal(state):
             if self.utility(state, 0) > 0:
-                print(f' P1 won')
+                print(f'P1 won')
             else:
-                print(f' P2 won')
+                print(f'P2 won')
         else:
-            print(f'it is P {self.to_move(state) + 1}\' s turn')
+            print(f'it is P{self.to_move(state) + 1}\'s turn')
 
 def minimax_search(game: Game, state: State) -> Action | None:
-    # YOUR CODE HERE
-    assert False, " Not implemented "
+    player = game.to_move(state)
+    value, move = max_value(game, state)
+    return move
+
+def max_value(game: Game, state: State) -> tuple[float, Action | None]:
+        if game.is_terminal(state):
+            return game.utility(state, player), None
+        value, move = -math.inf, None
+        for action in game.actions(state):
+            value2, action2 = min_value(game, game.result(state, action))
+            if value2 > value:
+                value, move = value2, action
+        return value, move
+
+def min_value(game: Game, state: State) -> tuple[float, Action | None]:
+        if game.is_terminal(state):
+            return game.utility(state, player), None
+        value, move = math.inf, None
+        for action in game.actions(state):
+            value2, action2 = max_value(game, game.result(state, action))
+            if value2 < value:
+                value, move = value2, action
+        return value, move
+
+
 
 game = Game(5)
 
