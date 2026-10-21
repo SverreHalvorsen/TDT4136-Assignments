@@ -46,7 +46,6 @@ class Game:
             print(f'it is P{self.to_move(state) + 1}\'s turn')
 
 def minimax_search(game: Game, state: State) -> Action | None:
-    player = game.to_move(state)
     value, move = max_value(game, state)
     return move
 
