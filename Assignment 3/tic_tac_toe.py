@@ -1,8 +1,10 @@
+import math
 from copy import deepcopy
 
 State = tuple[int, list[list[int | None]]]  # Tuple of player (whose turn it is),
-                                            # and board
+# and board
 Action = tuple[int, int]  # Where to place the player's piece
+
 
 class Game:
     def initial_state(self) -> State:
@@ -74,4 +76,45 @@ class Game:
             else:
                 print('The game is a draw')
         else:
-            print(f'It is P{self.to_move(state)+1}\'s turn to move')
+            print(f'It is P{self.to_move(state) + 1}\'s turn to move')
+
+
+def minimax_search(game: Game, state: State) -> Action | None:
+    value, move = max_value_minmax(game, state)
+    return move
+
+
+def max_value_minmax(game: Game, state: State) -> tuple[float, Action | None]:
+    if game.is_terminal(state):
+        return game.utility(state, player), None
+    value, move = -math.inf, None
+    for action in game.actions(state):
+        value2, action2 = min_value_minmax(game, game.result(state, action))
+        if value2 > value:
+            value, move = value2, action
+    return value, move
+
+
+def min_value_minmax(game: Game, state: State) -> tuple[float, Action | None]:
+    if game.is_terminal(state):
+        return game.utility(state, player), None
+    value, move = math.inf, None
+    for action in game.actions(state):
+        value2, action2 = max_value_minmax(game, game.result(state, action))
+        if value2 < value:
+            value, move = value2, action
+    return value, move
+
+
+game = Game()
+
+state = game.initial_state()
+game.print(state)
+while not game.is_terminal(state):
+    player = game.to_move(state)
+    action = minimax_search(game, state)  # The player whose turn it is
+    # is the MAX player
+    print(f'P{player + 1}\'s action: {action}')
+    assert action is not None
+    state = game.result(state, action)
+    game.print(state)
