@@ -81,13 +81,15 @@ class Game:
 
 
 def minimax_search(game: Game, state: State) -> Action | None:
+    """ Returns the best action for the player to move in the given state using the Minimax algorithm. """
     player = game.to_move(state)
     value, move = max_value_minmax(game, state, player)
     return move
 
 
-
 def max_value_minmax(game: Game, state: State, player: int) -> tuple[float, Action | None]:
+    """ Returns the maximum utility value and the corresponding action for the player to move in the
+        given state using the Minimax algorithm. """
     if game.is_terminal(state):
         return game.utility(state, player), None
     value, move = -math.inf, None
@@ -99,6 +101,8 @@ def max_value_minmax(game: Game, state: State, player: int) -> tuple[float, Acti
 
 
 def min_value_minmax(game: Game, state: State, player: int) -> tuple[float, Action | None]:
+    """ Returns the minimum utility value and the corresponding action for the player to move in the
+        given state using the Minimax algorithm. """
     if game.is_terminal(state):
         return game.utility(state, player), None
     value, move = math.inf, None
@@ -108,12 +112,17 @@ def min_value_minmax(game: Game, state: State, player: int) -> tuple[float, Acti
             value, move = value2, action
     return value, move
 
+
 def alfa_beta_search(game: Game, state: State) -> Action | None:
+    """ Returns the best action for the player to move in the given state using the Alpha-Beta pruning algorithm. """
     player = game.to_move(state)
     value, move = max_value_alfa_beta(game, state, player, -math.inf, math.inf)
     return move
 
+
 def max_value_alfa_beta(game: Game, state: State, player: int, alfa: float, beta: float) -> tuple[float, Action | None]:
+    """ Returns the maximum utility value and the corresponding action for the player to move in the
+        given state using the Alpha-Beta pruning algorithm. """
     if game.is_terminal(state):
         return game.utility(state, player), None
     value, move = -math.inf, None
@@ -126,7 +135,10 @@ def max_value_alfa_beta(game: Game, state: State, player: int, alfa: float, beta
             return value, move
     return value, move
 
+
 def min_value_alfa_beta(game: Game, state: State, player: int, alfa: float, beta: float) -> tuple[float, Action | None]:
+    """ Returns the minimum utility value and the corresponding action for the player to move in the
+        given state using the Alpha-Beta pruning algorithm. """
     if game.is_terminal(state):
         return game.utility(state, player), None
     value, move = math.inf, None
@@ -139,7 +151,10 @@ def min_value_alfa_beta(game: Game, state: State, player: int, alfa: float, beta
             return value, move
     return value, move
 
+
 def run_game(algorithm):
+    """ A simple function to run a game between two players using the specified algorithm. Using the handout
+        while-loop, running the algorithm passed as a parameter to determine the next move. """
     game = Game()
 
     state = game.initial_state()
@@ -158,17 +173,19 @@ def run_game(algorithm):
         assert action is not None
         state = game.result(state, action)
         game.print(state)
-        return end_time - start_time
+        move_number += 1
+    return end_time - start_time
 
 print("Minmax algorithm:")
 print("-----------------")
 first_move_time_minmax = run_game(minimax_search)
-print (f"\nTime taken for the first move using Minmax: {first_move_time_minmax:.6f} seconds")
+print(f"\nTime taken for the first move using Minmax: {first_move_time_minmax:.6f} seconds")
 
 print("\nAlfa-beta pruning algorithm:")
 print("-----------------------------")
 first_move_time_alfa_beta = run_game(alfa_beta_search)
-print (f"\nTime taken for the first move using Alfa-beta: {first_move_time_alfa_beta:.6f} seconds")
+print(f"\nTime taken for the first move using Alfa-beta: {first_move_time_alfa_beta:.6f} seconds")
 
 print()
-print(f"Alpha-beta pruning was {first_move_time_minmax}s / {first_move_time_alfa_beta}s = {first_move_time_minmax / first_move_time_alfa_beta:.2f} times faster than Minmax for the first move.")
+print(f"Alpha-beta pruning was {first_move_time_minmax}s / {first_move_time_alfa_beta}s = "
+      f"{first_move_time_minmax / first_move_time_alfa_beta:.2f} times faster than Minmax for the first move.")
