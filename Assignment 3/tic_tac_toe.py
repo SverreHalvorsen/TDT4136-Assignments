@@ -1,4 +1,5 @@
 import math
+import time
 from copy import deepcopy
 
 State = tuple[int, list[list[int | None]]]  # Tuple of player (whose turn it is),
@@ -143,19 +144,31 @@ def run_game(algorithm):
 
     state = game.initial_state()
     game.print(state)
+    move_number = 1
     while not game.is_terminal(state):
         player = game.to_move(state)
-        action = algorithm(game, state)  # The player whose turn it is
+        if move_number == 1:
+            start_time = time.perf_counter()
+            action = algorithm(game, state)  # The player whose turn it is
+            end_time = time.perf_counter()
+        else:
+            action = algorithm(game, state)
         # is the MAX player
         print(f'P{player + 1}\'s action: {action}')
         assert action is not None
         state = game.result(state, action)
         game.print(state)
+        return end_time - start_time
 
 print("Minmax algorithm:")
 print("-----------------")
-run_game(minimax_search)
+first_move_time_minmax = run_game(minimax_search)
+print (f"\nTime taken for the first move using Minmax: {first_move_time_minmax:.6f} seconds")
 
 print("\nAlfa-beta pruning algorithm:")
 print("-----------------------------")
-run_game(alfa_beta_search)
+first_move_time_alfa_beta = run_game(alfa_beta_search)
+print (f"\nTime taken for the first move using Alfa-beta: {first_move_time_alfa_beta:.6f} seconds")
+
+print()
+print(f"Alpha-beta pruning was {first_move_time_minmax}s / {first_move_time_alfa_beta}s = {first_move_time_minmax / first_move_time_alfa_beta:.2f} times faster than Minmax for the first move.")
