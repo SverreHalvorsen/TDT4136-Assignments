@@ -107,6 +107,37 @@ def min_value_minmax(game: Game, state: State, player: int) -> tuple[float, Acti
             value, move = value2, action
     return value, move
 
+def alfa_beta_search(game: Game, state: State) -> Action | None:
+    player = game.to_move(state)
+    value, move = max_value_alfa_beta(game, state, player, -math.inf, math.inf)
+    return move
+
+def max_value_alfa_beta(game: Game, state: State, player: int, alfa: float, beta: float) -> tuple[float, Action | None]:
+    if game.is_terminal(state):
+        return game.utility(state, player), None
+    value, move = -math.inf, None
+    for action in game.actions(state):
+        value2, action2 = min_value_alfa_beta(game, game.result(state, action), player, alfa, beta)
+        if value2 > value:
+            value, move = value2, action
+            alfa = max(alfa, value)
+        if value >= beta:
+            return value, move
+    return value, move
+
+def min_value_alfa_beta(game: Game, state: State, player: int, alfa: float, beta: float) -> tuple[float, Action | None]:
+    if game.is_terminal(state):
+        return game.utility(state, player), None
+    value, move = math.inf, None
+    for action in game.actions(state):
+        value2, action2 = max_value_alfa_beta(game, game.result(state, action), player, alfa, beta)
+        if value2 < value:
+            value, move = value2, action
+            beta = min(beta, value)
+        if value <= alfa:
+            return value, move
+    return value, move
+
 def run_game(algorithm):
     game = Game()
 
@@ -121,4 +152,10 @@ def run_game(algorithm):
         state = game.result(state, action)
         game.print(state)
 
+print("Minmax algorithm:")
+print("-----------------")
 run_game(minimax_search)
+
+print("\nAlfa-beta pruning algorithm:")
+print("-----------------------------")
+run_game(alfa_beta_search)
