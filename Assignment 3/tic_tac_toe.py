@@ -83,31 +83,31 @@ class Game:
 def minimax_search(game: Game, state: State) -> Action | None:
     """ Returns the best action for the player to move in the given state using the Minimax algorithm. """
     player = game.to_move(state)
-    value, move = max_value_minmax(game, state, player)
+    value, move = max_value_minimax(game, state, player)
     return move
 
 
-def max_value_minmax(game: Game, state: State, player: int) -> tuple[float, Action | None]:
+def max_value_minimax(game: Game, state: State, player: int) -> tuple[float, Action | None]:
     """ Returns the maximum utility value and the corresponding action for the player to move in the
         given state using the Minimax algorithm. """
     if game.is_terminal(state):
         return game.utility(state, player), None
     value, move = -math.inf, None
     for action in game.actions(state):
-        value2, action2 = min_value_minmax(game, game.result(state, action), player)
+        value2, action2 = min_value_minimax(game, game.result(state, action), player)
         if value2 > value:
             value, move = value2, action
     return value, move
 
 
-def min_value_minmax(game: Game, state: State, player: int) -> tuple[float, Action | None]:
+def min_value_minimax(game: Game, state: State, player: int) -> tuple[float, Action | None]:
     """ Returns the minimum utility value and the corresponding action for the player to move in the
         given state using the Minimax algorithm. """
     if game.is_terminal(state):
         return game.utility(state, player), None
     value, move = math.inf, None
     for action in game.actions(state):
-        value2, action2 = max_value_minmax(game, game.result(state, action), player)
+        value2, action2 = max_value_minimax(game, game.result(state, action), player)
         if value2 < value:
             value, move = value2, action
     return value, move
@@ -176,10 +176,10 @@ def run_game(algorithm):
         move_number += 1
     return end_time - start_time
 
-print("Minmax algorithm:")
+print("Minimax algorithm:")
 print("-----------------")
-first_move_time_minmax = run_game(minimax_search)
-print(f"\nTime taken for the first move using Minmax: {first_move_time_minmax:.6f} seconds")
+first_move_time_minimax = run_game(minimax_search)
+print(f"\nTime taken for the first move using Minimax: {first_move_time_minimax:.6f} seconds")
 
 print("\nAlfa-beta pruning algorithm:")
 print("-----------------------------")
@@ -187,5 +187,5 @@ first_move_time_alfa_beta = run_game(alfa_beta_search)
 print(f"\nTime taken for the first move using Alfa-beta: {first_move_time_alfa_beta:.6f} seconds")
 
 print()
-print(f"Alpha-beta pruning was {first_move_time_minmax}s / {first_move_time_alfa_beta}s = "
-      f"{first_move_time_minmax / first_move_time_alfa_beta:.2f} times faster than Minmax for the first move.")
+print(f"Alpha-beta pruning was {first_move_time_minimax}s / {first_move_time_alfa_beta}s = "
+      f"{first_move_time_minimax / first_move_time_alfa_beta:.2f} times faster than Minimax for the first move.")
